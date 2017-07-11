@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
+#pragma once
 #include "PositionReport.h"
+#include <GameFramework/Actor.h>
 
 
 // Sets default values for this component's properties
@@ -19,8 +20,11 @@ void UPositionReport::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	FString ObjectName{ GetOwner()->GetName() };
+	FString ObjectPos1{ GetOwner()->GetActorLocation().ToString() };
+	// Or another way (the one used in the course).
+	FString ObjectPos2{ GetOwner()->GetTransform().GetLocation().ToString() };
+	UE_LOG(LogTemp, Warning, TEXT("%s is at (from Pos1) %s - (from Pos2) %s"), *ObjectName, *ObjectPos1, *ObjectPos2);
 }
 
 

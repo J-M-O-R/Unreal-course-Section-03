@@ -23,15 +23,21 @@ void UOpenDoor::BeginPlay()
 	AActor* Owner{ GetOwner() };
 	float Zrotation{ Owner->GetActorRotation().GetComponentForAxis(EAxis::Z) };
 	UE_LOG(LogTemp, Warning, TEXT("The rotation for the Z axis is %f"), Zrotation);
-	
-	FRotator NewRotation{ 0.f, -40.f, 0.f };
-	Owner->SetActorRotation(NewRotation);
-	
-	UE_LOG(LogTemp, Warning, TEXT("The NEW rotation for the Z axis is %f"), Zrotation - 40.f);
 
-	// Do it with Quaternions
-	// Owner->GetActorQuat().;
-	//Owner->SetActorRotation(FQuat{});
+	// With a Rotator.
+	FRotator Rotation1{ 0.f, 20.f, 0.f };
+	Owner->SetActorRotation(Rotation1);
+
+	// With a Quaternion.
+	FRotator Rotation2{ 0.f, 30.f, 0.f };
+	FQuat Quaternion{ Rotation2.Quaternion() };
+	Owner->SetActorRotation(Quaternion);
+
+	/*
+	These are absolute angle values. All "SetActorRotation()" does it's to set the values for
+	the X, Y, and Z fields of the "Rotation" subsection in the "Transform" section of the
+	"Details" window.
+	*/
 }
 
 

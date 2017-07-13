@@ -29,7 +29,7 @@ void UOpenDoor::BeginPlay()
 	Owner->SetActorRotation(Rotation1);
 
 	// With a Quaternion.
-	FRotator Rotation2{ 0.f, 30.f, 0.f };
+	FRotator Rotation2{ 0.f, 145, 0.f };
 	FQuat Quaternion{ Rotation2.Quaternion() };
 	Owner->SetActorRotation(Quaternion);
 

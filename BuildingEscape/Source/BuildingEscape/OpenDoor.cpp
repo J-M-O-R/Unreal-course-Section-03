@@ -29,6 +29,10 @@ void UOpenDoor::BeginPlay()
 	In the code commented below we get the Actor Bottom-Up, i.e. from this Component to its associated
 	actor -> GetOwner().
 	*/
+
+	/**** Udemy course:
+	Owner = GetOwner();
+	****/
 	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
 
 	/* Getting the Z rotation of the Actor (StaticMeshActor in this case) to wich this Component
@@ -43,14 +47,12 @@ void UOpenDoor::BeginPlay()
 
 void UOpenDoor::OpenDoor() {
 
-	AActor* Owner{ GetOwner() };
-
 	// With a Rotator.
-	FRotator Rotation1{ 0.f, 145.f, 0.f };
+	FRotator Rotation1{ 0.f, OpenAngle, 0.f };
 	Owner->SetActorRotation(Rotation1);
 
 	/* With a Quaternion.
-	FRotator Rotation2{ 0.f, 145, 0.f };
+	FRotator Rotation2{ 0.f, OpenAngle, 0.f };
 	FQuat Quaternion{ Rotation2.Quaternion() };
 	Owner->SetActorRotation(Quaternion);
 
@@ -60,6 +62,11 @@ void UOpenDoor::OpenDoor() {
 	*/
 }
 
+void UOpenDoor::CloseDoor() {
+
+	Owner->SetActorRotation(FRotator{ 0.f, 180.f, 0.f });
+
+}
 
 // Called every frame
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -69,6 +76,11 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	// Polling the Trigger Volume every frame and if ActorThatOpen is in the volume then open the door(s).
 	if (PressurePlate->IsOverlappingActor(ActorThatOpens)) {
 		OpenDoor();
+		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
 	}
+	if (GetWorld()->GetTimeSeconds() >= LastDoorOpenTime + DoorCloseDelay) {
+		CloseDoor();
+	}
+	
 }
 

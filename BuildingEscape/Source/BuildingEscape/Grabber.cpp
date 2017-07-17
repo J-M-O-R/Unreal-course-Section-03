@@ -3,8 +3,9 @@
 #include "Grabber.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
 
-
+#define OUT	// This macro does nothing, the instructor doesn't like to pass parameters by reference, so he wants to mark them.
 
 // Sets default values for this component's properties
 UGrabber::UGrabber()
@@ -37,6 +38,16 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// Get player view point
-	//GetWorld()->GetFirstPlayerController();
+	FVector PlayerViewPointLocation;
+	FRotator PlayerViewPointRotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerViewPointLocation,
+		OUT PlayerViewPointRotation
+	);
+
+	UE_LOG(LogTemp, Warning, TEXT("Location: %s, Rotation: %s"),
+		   *PlayerViewPointLocation.ToString(),
+		   *PlayerViewPointRotation.ToString()
+	)
 }
 

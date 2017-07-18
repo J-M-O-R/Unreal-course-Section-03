@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+#include "DrawDebugHelpers.h"
 
 #define OUT	// This macro does nothing, the instructor doesn't like to pass parameters by reference, so he wants to mark them.
 
@@ -44,10 +45,28 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		OUT PlayerViewPointLocation,
 		OUT PlayerViewPointRotation
 	);
+	/* The code below just output the x, y, z coordinates of the position of the player, and the roll, pitch, and yaw
+	   of its rotation.
 
 	UE_LOG(LogTemp, Warning, TEXT("Location: %s, Rotation: %s"),
 		   *PlayerViewPointLocation.ToString(),
 		   *PlayerViewPointRotation.ToString()
 	)
+
+	We'll try to draw a line proyecting out of the player instead.
+	*/
+
+	FVector	LineTraceEnd{ PlayerViewPointLocation + PlayerViewPointRotation.Vector() * Reach };
+
+	DrawDebugLine(
+		GetWorld(),
+		PlayerViewPointLocation,
+		LineTraceEnd,
+		FColor{ 255, 0, 0 },
+		false,
+		0.f,
+		0.f,
+		10.f
+	);
 }
 

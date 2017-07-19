@@ -34,11 +34,10 @@ void UGrabber::BeginPlay()
 
 
 // Called every frame
-void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
+void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// Get player view point
+	/// Get player view point
 	FVector PlayerViewPointLocation;
 	FRotator PlayerViewPointRotation;
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
@@ -55,7 +54,6 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	We'll try to draw a line proyecting out of the player instead.
 	*/
-
 	FVector	LineTraceEnd{ PlayerViewPointLocation + PlayerViewPointRotation.Vector() * Reach };
 
 	DrawDebugLine(
@@ -68,5 +66,22 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		0.f,
 		10.f
 	);
+
+	/// Line-trace (AKA ray-cast) out to reach distance
+	FCollisionQueryParams TraceParameters{ FName{ TEXT("") }, false, GetOwner() };
+	FHitResult Hit;
+
+	/// LineTraceMultiBy_____ passes through multiple objects and returns different references.
+	bool Hitted{ GetWorld()->LineTraceSingleByObjectType(
+		OUT Hit,
+		PlayerViewPointLocation,
+		LineTraceEnd,
+		FCollisionObjectQueryParams{ ECollisionChannel::ECC_PhysicsBody },
+		TraceParameters
+	) };
+	if (Hitted) {
+		FString ReachedActor{ Hit.GetActor()->GetName() };
+		UE_LOG(LogTemp, Warning, TEXT("%s is at reaching distance!"), *ReachedActor)
+	}
 }
 

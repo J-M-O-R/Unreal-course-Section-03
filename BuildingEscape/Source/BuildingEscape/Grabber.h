@@ -26,12 +26,25 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
+	// Name of the Actor owner of this component.
+	FString PawnName;
+
 	// How far ahead of the player can we reach in centimeters.
 	float Reach{ 100.f };
 
 	UPhysicsHandleComponent* PhysicsHandle{ nullptr };
 	UInputComponent* InputComponent{ nullptr };
 
+	// Find (assumed) attached physics handle
+	void FindPhysicsHandleComponent();
+	// Setup (assumed) attached input Component
+	void SetupInputComponent();
+
+	// Return hit for first physics body in reach
+	FHitResult GetFirstPhysicsBodyInReach() const;
+
 	// Ray-cast and grab what's in reach.
 	void Grab();
+	// Called when grab	is released.
+	void Release();
 };

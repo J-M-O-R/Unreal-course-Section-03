@@ -27,11 +27,25 @@ void UGrabber::BeginPlay()
 	// Reporting for duty
 	FString PawnName{ GetOwner()->GetName() };
 	UE_LOG(LogTemp, Warning, TEXT("%s's grabber reporting for duty!"), *PawnName);
-	// Getting the player controler
-	
+
+	/// Look for attached Physics Handle component
+	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	if (!PhysicsHandle) {
+		UE_LOG(LogTemp, Error, TEXT("%s missing Physics Handle Component"), *PawnName)
+	}
+	/// Look for attached Input component (only appears at run time)
+	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
+	if (InputComponent) {
+		InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
+	} else {
+		UE_LOG(LogTemp, Error, TEXT("%s missing Input Component"), *PawnName)
+	}
 	
 }
 
+void UGrabber::Grab() {
+	UE_LOG(LogTemp, Warning, TEXT("Grab pressed"))
+}
 
 // Called every frame
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {

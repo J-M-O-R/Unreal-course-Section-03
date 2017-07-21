@@ -5,6 +5,7 @@
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 #include "DrawDebugHelpers.h"
+#include "Components/PrimitiveComponent.h"
 
 #define OUT	// This macro does nothing, the instructor doesn't like to pass parameters by reference, so he wants to mark them.
 
@@ -56,24 +57,49 @@ void UGrabber::Grab() {
 	UE_LOG(LogTemp, Warning, TEXT("Grab pressed"))
 
 	/// LINE TRACE and see if we reach any actors with physics body collision channel set
-	GetFirstPhysicsBodyInReach();
+	auto HitResult = GetFirstPhysicsBodyInReach();
+	auto ActorHit{ HitResult.GetActor() };
+	auto ComponentToGrab{ HitResult.GetComponent() };
 
 	/// If we hit something then attach a physics handle
-	// TODO Attach physics handle
+	if (ActorHit) {
+		// Attach physics handle
+		PhysicsHandle->GrabComponent(
+			ComponentToGrab,
+			NAME_None,
+			ComponentToGrab->GetOwner()->GetActorLocation(),
+			true	// Allow rotation
+		);
+	}
+
 }
 
 void UGrabber::Release() {
 	UE_LOG(LogTemp, Warning, TEXT("Grab released"))
 
-	// TODO Release physics handle
+		// TODO Release physics handle
+		PhysicsHandle->ReleaseComponent();
 }
 
 // Called every frame
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	/// Get player view point
+	FVector PlayerViewPointLocation;
+	FRotator PlayerViewPointRotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerViewPointLocation,
+		OUT PlayerViewPointRotation
+	);
+	FVector	LineTraceEnd{ PlayerViewPointLocation + PlayerViewPointRotation.Vector() * Reach };
+
 	// if the physics handle is attached
+	if (PhysicsHandle->GrabbedComponent) {
 		// move the object that we're holding
+		PhysicsHandle->SetTargetLocation(LineTraceEnd);
+	}
+		
 
 		
 		
@@ -142,5 +168,5 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() const {
 		UE_LOG(LogTemp, Warning, TEXT("%s is at reaching distance!"), *ReachedActor)
 	}
 
-	return FHitResult();
+	return Hit;
 }

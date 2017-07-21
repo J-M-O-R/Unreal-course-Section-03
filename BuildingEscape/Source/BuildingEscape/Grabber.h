@@ -29,6 +29,11 @@ private:
 	// Name of the Actor owner of this component.
 	FString PawnName;
 
+	// Player location, rotation, and reach
+	FVector PlayerViewPointLocation;
+	FRotator PlayerViewPointRotation;
+	FVector	LineTraceEnd;	// The end of this line determines the maximum reach for the player
+
 	// How far ahead of the player can we reach in centimeters.
 	float Reach{ 100.f };
 
@@ -39,6 +44,9 @@ private:
 	void FindPhysicsHandleComponent();
 	// Setup (assumed) attached input Component
 	void SetupInputComponent();
+
+	// Figures out the player view point and reach at a given time
+	void CalculatePlayerViewpointAndReach();
 
 	// Return hit for first physics body in reach
 	FHitResult GetFirstPhysicsBodyInReach() const;

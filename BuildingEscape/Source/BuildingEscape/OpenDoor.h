@@ -44,5 +44,9 @@ private:
 	AActor* Owner;	// The owning door.
 	****/
 	AActor* Owner{ GetOwner() };	// The owning door.
+	/* Removed in lecture 88, so now the doors will be open by any Actor
 	AActor* ActorThatOpens;
+	*/
+	// Returns total mass in kg
+	float GetTotalMassOfActorsOnPlate();
 };

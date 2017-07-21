@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+#include "Components/PrimitiveComponent.h"
 
 // Sets default values for this component's properties
 UOpenDoor::UOpenDoor()
@@ -33,8 +34,9 @@ void UOpenDoor::BeginPlay()
 	/**** Udemy course:
 	Owner = GetOwner();
 	****/
+	/* Removed in lecture 88, so now the doors will be open by any Actor
 	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
-
+	*/
 	/* Getting the Z rotation of the Actor (StaticMeshActor in this case) to wich this Component
 	   is associated.
 	   And printing the information in the Output Log tab of the Unreal Editor.
@@ -74,7 +76,10 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// Polling the Trigger Volume every frame and if ActorThatOpen is in the volume then open the door(s).
+	/* Removed in lecture 88, so now the doors will be open by any Actor
 	if (PressurePlate->IsOverlappingActor(ActorThatOpens)) {
+	*/
+	if(GetTotalMassOfActorsOnPlate() > 30.f) { // TODO Make the trigger mass into a parameter
 		OpenDoor();
 		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
 	}
@@ -84,3 +89,20 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	
 }
 
+float UOpenDoor::GetTotalMassOfActorsOnPlate() {
+	float TotalMass{ 0.f };
+
+	// Find all the overlapping actors
+	TArray<AActor*> OverlappingActors;
+	PressurePlate->GetOverlappingActors(OUT OverlappingActors);
+	
+	// Iterate through them adding their masses
+	for (const auto& Actor : OverlappingActors) {
+		
+		UE_LOG(LogTemp, Warning, TEXT("Name: %s"), *Actor->GetName());
+
+		TotalMass += Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+	}
+
+	return TotalMass;
+}

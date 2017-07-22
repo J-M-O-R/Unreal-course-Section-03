@@ -49,22 +49,26 @@ void UOpenDoor::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("%s missing Pressure Plate (i.e. Trigger Volume) in the OpenDoor Component"), *Owner->GetName())
 	}
 }
+/*
+We are not longer openning/closing the door, i.e. setting it Z-rotation angle, in C++. Rather we now do it
+in the Blueprint(ed) door class. We just generate the event (code above) and hence this code below it's
+obsolete
 
 void UOpenDoor::OpenDoor() {
 
-	// With a Rotator.
+	// With a Rotator. It's the same just choose one, this Rotator or the next Quaternion.
 	FRotator Rotation1{ 0.f, OpenAngle, 0.f };
 	Owner->SetActorRotation(Rotation1);
 
-	/* With a Quaternion.
+	// With a Quaternion.
 	FRotator Rotation2{ 0.f, OpenAngle, 0.f };
 	FQuat Quaternion{ Rotation2.Quaternion() };
 	Owner->SetActorRotation(Quaternion);
-
-	These are absolute angle values. All "SetActorRotation()" does it's to set the values for
-	the X, Y, and Z fields of the "Rotation" subsection in the "Transform" section of the
-	"Details" window.
-	*/
+	
+	// These are absolute angle values. All "SetActorRotation()" does it's to set the values for
+	// the X, Y, and Z fields of the "Rotation" subsection in the "Transform" section of the
+	// "Details" window.
+	
 }
 
 void UOpenDoor::CloseDoor() {
@@ -72,7 +76,7 @@ void UOpenDoor::CloseDoor() {
 	Owner->SetActorRotation(FRotator{ 0.f, 180.f, 0.f });
 
 }
-
+*/
 // Called every frame
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -82,14 +86,21 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	/* Removed in lecture 88, so now the doors will be open by any Actor
 	if (PressurePlate->IsOverlappingActor(ActorThatOpens)) {
 	*/
-	if(GetTotalMassOfActorsOnPlate() > 30.f) { // TODO Make the trigger mass into a parameter
+	if(GetTotalMassOfActorsOnPlate() > TriggerMass) {
+
+		OnOpen.Broadcast();
+	/* The openning/closing of the door is now do it in the Blueprint(ed) class.
+
 		OpenDoor();
 		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
+		
 	}
 	if (GetWorld()->GetTimeSeconds() >= LastDoorOpenTime + DoorCloseDelay) {
 		CloseDoor();
+	*/
+	} else {
+		OnClose.Broadcast();
 	}
-	
 }
 
 float UOpenDoor::GetTotalMassOfActorsOnPlate() {

@@ -59,6 +59,7 @@ void UGrabber::Grab() {
 
 	/// If we hit something then attach a physics handle
 	if (ActorHit) {
+		if (!PhysicsHandle) { return; }	// Pointer protection
 		// Attach physics handle
 		PhysicsHandle->GrabComponent(
 			ComponentToGrab,	// Gets the mesh in our case
@@ -71,8 +72,9 @@ void UGrabber::Grab() {
 }
 
 void UGrabber::Release() {
-		// Release physics handle
-		PhysicsHandle->ReleaseComponent();
+	if (!PhysicsHandle) { return; }	// Pointer protection
+	// Release physics handle
+	PhysicsHandle->ReleaseComponent();
 }
 
 // Called every frame
@@ -84,6 +86,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	*/
 	CalculatePlayerViewpointAndReach();
 
+	if (!PhysicsHandle) { return; }	// Pointer protection
 	// if the physics handle is attached
 	if (PhysicsHandle->GrabbedComponent) {
 		// move the object that we're holding. Holding it at the end of the player's reach.

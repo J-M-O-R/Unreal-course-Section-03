@@ -45,6 +45,9 @@ void UOpenDoor::BeginPlay()
 	float Zrotation{ Owner->GetActorRotation().GetComponentForAxis(EAxis::Z) };
 	UE_LOG(LogTemp, Warning, TEXT("The rotation for the Z axis is %f"), Zrotation);
 	*/
+	if (!PressurePlate) {
+		UE_LOG(LogTemp, Error, TEXT("%s missing Pressure Plate (i.e. Trigger Volume) in the OpenDoor Component"), *Owner->GetName())
+	}
 }
 
 void UOpenDoor::OpenDoor() {
@@ -92,6 +95,7 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 float UOpenDoor::GetTotalMassOfActorsOnPlate() {
 	float TotalMass{ 0.f };
 
+	if (!PressurePlate) { return 0.f; }
 	// Find all the overlapping actors
 	TArray<AActor*> OverlappingActors;
 	PressurePlate->GetOverlappingActors(OUT OverlappingActors);

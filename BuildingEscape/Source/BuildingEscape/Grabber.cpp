@@ -61,12 +61,22 @@ void UGrabber::Grab() {
 	if (ActorHit) {
 		if (!PhysicsHandle) { return; }	// Pointer protection
 		// Attach physics handle
+		PhysicsHandle->GrabComponentAtLocationWithRotation(	// Does NOT allow rotation of the grabbed object when pickup.
+			ComponentToGrab,	// Gets the mesh in our case
+			NAME_None,	// No bones needed
+			ComponentToGrab->GetOwner()->GetActorLocation(),
+			ComponentToGrab->GetOwner()->GetActorRotation()
+		);
+		/*
+		Deprecated, using GrabComponentAtLocationWithRotation() instead.
+
 		PhysicsHandle->GrabComponent(
 			ComponentToGrab,	// Gets the mesh in our case
 			NAME_None,	// No bones needed
 			ComponentToGrab->GetOwner()->GetActorLocation(),
-			true	// Allow rotation
+			true	// Does NOT allow rotation
 		);
+		*/
 	}
 
 }
